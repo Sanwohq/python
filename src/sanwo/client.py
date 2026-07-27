@@ -44,16 +44,26 @@ class Sanwo:
         public_key: str,
         currency: str = "NGN",
         debug: bool = False,
+        template_url: Optional[str] = None,
+        template: Optional[str] = None,
     ) -> None:
         if not public_key:
             raise SanwoConfigurationError("public_key is required")
 
         self._provider = resolve_provider(provider)
+
+        if self._provider.id == "custom" and not template and not template_url:
+            raise SanwoConfigurationError(
+                'Custom provider requires a "template" or "template_url"'
+            )
+
         self._config = SanwoConfig(
             provider=self._provider.id,
             public_key=public_key,
             currency=currency,
             debug=debug,
+            template_url=template_url,
+            template=template,
         )
 
     # ------------------------------------------------------------------
@@ -81,18 +91,31 @@ class Sanwo:
     def script_url(self) -> str:
         return self._config.script_url
 
+    @property
+    def template_url(self) -> Optional[str]:
+        return self._config.template_url
+
+    @property
+    def template(self) -> Optional[str]:
+        return self._config.template
+
     def get_config(self) -> Dict[str, Any]:
         """Return the current configuration as a plain dictionary.
 
         Useful for passing config values into your own templates.
         """
-        return {
+        cfg: Dict[str, Any] = {
             "provider": self._config.provider,
             "public_key": self._config.public_key,
             "currency": self._config.currency,
             "debug": self._config.debug,
             "script_url": self._config.script_url,
         }
+        if self._config.template_url:
+            cfg["template_url"] = self._config.template_url
+        if self._config.template:
+            cfg["template"] = self._config.template
+        return cfg
 
     # ------------------------------------------------------------------
     # HTML / JS rendering
@@ -179,9 +202,7 @@ class Sanwo:
         if description:
             checkout_opts["description"] = description
 
-        config_json = json.dumps(
-            {"provider": self._config.provider, "publicKey": self._config.public_key}
-        )
+        config_json = json.dumps(self._build_create_config())
         opts_json = json.dumps(checkout_opts)
         debug_flag = "true" if self._config.debug else "false"
         callback_js = ""
@@ -266,9 +287,7 @@ class Sanwo:
         cur = currency or self._config.currency
         widget_id = f"sanwo-custom-{uuid.uuid4().hex[:8]}"
 
-        config_json = json.dumps(
-            {"provider": self._config.provider, "publicKey": self._config.public_key}
-        )
+        config_json = json.dumps(self._build_create_config())
         debug_flag = "true" if self._config.debug else "false"
 
         # Build data attributes for the div (matching Laravel pattern).
@@ -282,6 +301,10 @@ class Sanwo:
         ]
         if self._config.debug:
             attrs.append('data-sanwo-debug="true"')
+        if self._config.template_url:
+            attrs.append(f'data-sanwo-template-url="{escape(self._config.template_url)}"')
+        if self._config.template:
+            attrs.append(f'data-sanwo-template="{escape(self._config.template)}"')
         if email:
             attrs.append(f'data-sanwo-email="{escape(email)}"')
         if min_amount is not None:
@@ -394,6 +417,17 @@ class Sanwo:
     # ------------------------------------------------------------------
     # Internal
     # ------------------------------------------------------------------
+
+    def _build_create_config(self) -> Dict[str, Any]:
+        cfg: Dict[str, Any] = {
+            "provider": self._config.provider,
+            "publicKey": self._config.public_key,
+        }
+        if self._config.template_url:
+            cfg["templateUrl"] = self._config.template_url
+        if self._config.template:
+            cfg["template"] = self._config.template
+        return cfg
 
     @staticmethod
     def _validate_checkout(amount: int, email: str) -> None:

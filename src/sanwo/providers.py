@@ -49,6 +49,14 @@ INTERSWITCH = ProviderConfig(
     sdk_type="redirect",
 )
 
+CUSTOM = ProviderConfig(
+    id="custom",
+    name="Custom",
+    display_name="Custom Provider",
+    website="",
+    sdk_type="embedded",
+)
+
 # Lookup table for resolving string IDs to ProviderConfig instances.
 _PROVIDERS = {
     "paystack": PAYSTACK,
@@ -56,6 +64,7 @@ _PROVIDERS = {
     "razorpay": RAZORPAY,
     "monnify": MONNIFY,
     "interswitch": INTERSWITCH,
+    "custom": CUSTOM,
 }
 
 
@@ -66,7 +75,7 @@ def resolve_provider(provider: str | ProviderConfig) -> ProviderConfig:
     ----------
     provider:
         Either a :class:`ProviderConfig` instance or a string ID such as
-        ``"paystack"``.
+        ``"paystack"`` or ``"custom"`` for custom provider templates.
 
     Returns
     -------

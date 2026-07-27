@@ -57,3 +57,5 @@ class SanwoConfig:
     script_url: str = (
         "https://cdn.jsdelivr.net/npm/@sanwohq/embed/dist/sanwo.global.js"
     )
+    template_url: Optional[str] = None
+    template: Optional[str] = None

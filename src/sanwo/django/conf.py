@@ -40,6 +40,8 @@ def get_sanwo_client() -> Sanwo:
             public_key=getattr(settings, "SANWO_PUBLIC_KEY", ""),
             currency=getattr(settings, "SANWO_CURRENCY", "NGN"),
             debug=getattr(settings, "SANWO_DEBUG", False),
+            template_url=getattr(settings, "SANWO_TEMPLATE_URL", None),
+            template=getattr(settings, "SANWO_TEMPLATE", None),
         )
     return _client
 

@@ -56,6 +56,8 @@ class SanwoFlask:
         app.config.setdefault("SANWO_PUBLIC_KEY", "")
         app.config.setdefault("SANWO_CURRENCY", "NGN")
         app.config.setdefault("SANWO_DEBUG", False)
+        app.config.setdefault("SANWO_TEMPLATE_URL", None)
+        app.config.setdefault("SANWO_TEMPLATE", None)
 
         # Create the client and store it on the app for later access.
         client = Sanwo(
@@ -63,6 +65,8 @@ class SanwoFlask:
             public_key=app.config["SANWO_PUBLIC_KEY"],
             currency=app.config["SANWO_CURRENCY"],
             debug=app.config["SANWO_DEBUG"],
+            template_url=app.config["SANWO_TEMPLATE_URL"],
+            template=app.config["SANWO_TEMPLATE"],
         )
 
         # Store on the app extensions dict so users can access it if needed.

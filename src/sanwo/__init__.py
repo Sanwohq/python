@@ -7,6 +7,7 @@ from sanwo.exceptions import (
     SanwoError,
 )
 from sanwo.providers import (
+    CUSTOM,
     FLUTTERWAVE,
     INTERSWITCH,
     MONNIFY,
@@ -29,6 +30,7 @@ __all__ = [
     "RAZORPAY",
     "MONNIFY",
     "INTERSWITCH",
+    "CUSTOM",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
