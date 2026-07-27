@@ -7,7 +7,7 @@ Add [Sanwo](https://sanwohq.com) payments to your Python application — Django,
 ## Install
 
 ```bash
-pip install sanwohq
+pip install sanwo
 ```
 
 ## License
